@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("artistas")
+@RequestMapping("/artistas")
 public class ArtistaController {
 
     @Autowired
@@ -19,7 +19,7 @@ public class ArtistaController {
 
 
     @GetMapping
-    public ResponseEntity<List<Artista>> getArtista(){
+    public ResponseEntity<List<Artista>> getAllArtista(){
         List<Artista> artistas = artistaRepository.findAll();
         return ResponseEntity.ok(artistas);
     }

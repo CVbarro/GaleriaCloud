@@ -6,15 +6,13 @@ import com.galeriaCloud.galeria.repository.ArtistaRepository;
 import com.galeriaCloud.galeria.repository.ObraRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("obras")
+@RequestMapping("/obras")
 public class ObraController {
 
     @Autowired
@@ -36,7 +34,33 @@ public class ObraController {
         }
 
         obra.setArtista(artista.get());
-        return ResponseEntity.ok(obraRepository.save(obra));
+        Obra obraSalva = obraRepository.save(obra);
+        return ResponseEntity.ok(obraRepository.save(obraSalva));
     }
+
+    @GetMapping
+    public ResponseEntity<List<Obra>> getAllObras(){
+        List<Obra> obras = obraRepository.findAll();
+        return ResponseEntity.ok(obras);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Obra> getObra(@PathVariable Integer id){
+            return obraRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteObra(@PathVariable Integer id){
+        if (!obraRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        obraRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+
 
 }
