@@ -23,19 +23,24 @@ public class ObraController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody Obra obra) {
-
-        if (obra.getArtista() == null || obra.getArtista().getId() == null) {
-            return ResponseEntity.badRequest().body("Artista inválido");
+        // Verifica se o nome do artista foi informado
+        if (obra.getArtistaNome() == null || obra.getArtistaNome().isBlank()) {
+            return ResponseEntity.badRequest().body("Nome do artista inválido");
         }
 
-        Optional<Artista> artista = artistaRepository.findById(Integer.valueOf(obra.getArtista().getId()));
+        // Busca o artista pelo nome
+        Optional<Artista> artista = artistaRepository.findByNome(obra.getArtistaNome());
+        Artista artista1 = artista.get();
+
         if (artista.isEmpty()) {
             return ResponseEntity.badRequest().body("Artista não encontrado");
         }
 
-        obra.setArtista(artista.get());
+        // Setar o nome do artista (pode até repetir a string, mas o relacionamento não existe mais)
+        obra.setArtistaNome(artista.get().getNome());
+        artista1.getObras().add(obra);
         Obra obraSalva = obraRepository.save(obra);
-        return ResponseEntity.ok(obraRepository.save(obraSalva));
+        return ResponseEntity.ok(obraSalva);
     }
 
     @GetMapping
@@ -46,7 +51,7 @@ public class ObraController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Obra> getObra(@PathVariable Integer id){
-            return obraRepository.findById(id)
+        return obraRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -60,7 +65,4 @@ public class ObraController {
         obraRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
-
-
 }

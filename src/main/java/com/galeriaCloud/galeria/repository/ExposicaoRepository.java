@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ExposicaoRepository extends CosmosRepository<Exposicao, String> {
-    List<Exposicao> findByArtistaId(String artistaId);
     List<Exposicao> findByArtistaNome(String artistaNome);
 }

@@ -11,7 +11,7 @@ public class Obra {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private int id;
 
     private String titulo;
 
@@ -21,7 +21,6 @@ public class Obra {
 
     private String imagemURL;
 
-    @ManyToOne
-    @JoinColumn(name = "Id_artista")
-    private Artista artista;
+    @Column(name = "nome_Artista")
+    private String artistaNome;
 }
