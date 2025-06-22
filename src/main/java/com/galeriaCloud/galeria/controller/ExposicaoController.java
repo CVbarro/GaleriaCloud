@@ -2,7 +2,6 @@ package com.galeriaCloud.galeria.controller;
 
 import com.galeriaCloud.galeria.model.Exposicao;
 import com.galeriaCloud.galeria.model.Artista;
-import com.galeriaCloud.galeria.model.ItemObra;
 import com.galeriaCloud.galeria.model.Obra;
 import com.galeriaCloud.galeria.repository.ExposicaoRepository;
 import com.galeriaCloud.galeria.repository.ArtistaRepository;
@@ -22,7 +21,11 @@ public class ExposicaoController {
     private final ArtistaRepository artistaRepository;
     private final ObraRepository obraRepository;
 
-    public ExposicaoController(ExposicaoRepository exposicaoRepository, ArtistaRepository artistaRepository, ObraRepository obraRepository) {
+    public ExposicaoController(
+            ExposicaoRepository exposicaoRepository,
+            ArtistaRepository artistaRepository,
+            ObraRepository obraRepository
+    ) {
         this.exposicaoRepository = exposicaoRepository;
         this.artistaRepository = artistaRepository;
         this.obraRepository = obraRepository;
@@ -30,58 +33,45 @@ public class ExposicaoController {
 
     @PostMapping
     public ResponseEntity<?> criar(@RequestBody ExposicaoRequest request) {
-        // Buscar artista pelo nome agora
         Optional<Artista> artistaOpt = artistaRepository.findByNome(request.getArtistaNome());
         if (artistaOpt.isEmpty()) {
             return ResponseEntity.badRequest().body("Artista não encontrado");
         }
 
-        Artista artista = artistaOpt.get();
-
-        List<ItemObra> itensObra = new ArrayList<>();
-        for (String obraId : request.getObrasIds()) {
-            Optional<Obra> obraOpt = obraRepository.findById(Integer.valueOf(obraId));
+        List<Obra> obras = new ArrayList<>();
+        for (Integer obraId : request.getObrasIds()) {
+            Optional<Obra> obraOpt = obraRepository.findById(obraId);
             if (obraOpt.isPresent()) {
-                Obra obra = obraOpt.get();
-
-                ItemObra item = new ItemObra();
-                item.setId(String.valueOf(obra.getId()));
-                item.setTitulo(obra.getTitulo());
-                item.setImagemUrl(obra.getImagemURL());
-
-                itensObra.add(item);
+                obras.add(obraOpt.get());
             } else {
                 return ResponseEntity.badRequest().body("Obra não encontrada: ID " + obraId);
             }
         }
 
         Exposicao exposicao = new Exposicao();
-        exposicao.setId(request.getId());
         exposicao.setNome(request.getNome());
         exposicao.setDescricao(request.getDescricao());
         exposicao.setData(request.getData() != null ? request.getData() : LocalDateTime.now());
-        exposicao.setArtistaNome(artista.getNome());
-        exposicao.setObras(itensObra);
+        exposicao.setArtistaNome(request.getArtistaNome());
+        exposicao.setObras(obras);
 
         exposicaoRepository.save(exposicao);
-        return ResponseEntity.ok().body(exposicao);
+        return ResponseEntity.status(201).body(exposicao);
     }
 
-    // Buscar exposicoes por nome do artista
     @GetMapping("/artista/{artistaNome}")
     public ResponseEntity<List<Exposicao>> listarPorArtista(@PathVariable String artistaNome) {
         return ResponseEntity.ok(exposicaoRepository.findByArtistaNome(artistaNome));
     }
 
     @DeleteMapping("/{exposicaoId}")
-    public ResponseEntity<Void> deletar(@PathVariable String exposicaoId) {
-        Optional<Exposicao> exposicao = exposicaoRepository.findById(exposicaoId);
+    public ResponseEntity<Void> deletar(@PathVariable int exposicaoId) {
+        Optional<Exposicao> exposicao = exposicaoRepository.findById(String.valueOf(exposicaoId));
         if (exposicao.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         exposicaoRepository.delete(exposicao.get());
         return ResponseEntity.noContent().build();
     }
+
 }
-
-

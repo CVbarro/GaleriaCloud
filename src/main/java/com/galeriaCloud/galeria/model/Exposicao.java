@@ -1,26 +1,31 @@
 package com.galeriaCloud.galeria.model;
 
-import com.azure.spring.data.cosmos.core.mapping.Container;
-import com.azure.spring.data.cosmos.core.mapping.PartitionKey;
+import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@Container(containerName = "exposicoes")
+@Entity
 public class Exposicao {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-    @PartitionKey
     private String artistaNome;
 
     private String nome;
     private String descricao;
+
     private LocalDateTime data;
 
-    private List<ItemObra> obras;
+    @ManyToMany
+    @JoinTable(
+            name = "exposicao_obra",
+            joinColumns = @JoinColumn(name = "exposicao_id"),
+            inverseJoinColumns = @JoinColumn(name = "obra_id")
+    )
+    private List<Obra> obras;
 }
