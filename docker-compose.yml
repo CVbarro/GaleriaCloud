@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   mysql:
-    image: mysql:8.0
-    container_name: galeria-mysql
+    image: app
+    container_name: galeria-app
     environment:
       MYSQL_DATABASE: galeria
       MYSQL_USER: Cvbarro
