@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy JAR app to Azure Web App - ibmec-cloud-galeria
+name: Build and deploy JAR app to Azure Web App - ibmec-galeria-cloud
 
 on:
   push:
@@ -36,9 +36,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout
@@ -52,15 +50,15 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C3220CD893C546CEB2440DBDD13478D9 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_17A73B5EF40044FC8917B5C2A93622A2 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_F7B9CE77B32B4021978676D3750DFB5A }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_5DF17FBFB9E8488A91DC55CF59D02093 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_EB4E75B820564408B7B42A5415799F72 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9A4A8E65DAE749CCB0549435F26B0E7D }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'ibmec-cloud-galeria'
+          app-name: 'ibmec-galeria-cloud'
           slot-name: 'Production'
           package: '*.jar'
           
