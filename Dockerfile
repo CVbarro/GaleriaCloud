@@ -18,5 +18,7 @@ COPY --from=build /app/target/*.jar app.jar
 # Expõe a porta padrão do Spring Boot
 EXPOSE 8080
 
+EXPOSE 80
+
 # Comando de execução
 ENTRYPOINT ["java", "-jar", "app.jar"]
