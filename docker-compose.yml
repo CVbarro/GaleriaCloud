@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   mysql:
-    image: app
-    container_name: galeria-app
+    image: mysql:8.0
+    container_name: galeria-mysql
     environment:
       MYSQL_DATABASE: galeria
       MYSQL_USER: Cvbarro
@@ -17,6 +17,7 @@ services:
       - galeria-network
 
   app:
+    image: app  # nome da imagem gerada localmente
     build:
       context: .
       dockerfile: Dockerfile
