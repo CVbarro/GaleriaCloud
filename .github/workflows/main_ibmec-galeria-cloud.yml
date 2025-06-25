@@ -10,43 +10,42 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout código
+        uses: actions/checkout@v4
 
       - name: Set up Java version
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
-          
-      - name: Install Docker Compose
+
+      - name: Instalar Docker Compose
         run: |
           DOCKER_COMPOSE_VERSION=2.20.2
           sudo curl -L "https://github.com/docker/compose/releases/download/v$DOCKER_COMPOSE_VERSION/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose version
 
-      - name: Build with Maven
+      - name: Build do projeto com Maven
         run: mvn clean package -DskipTests
 
-      - name: Login Azure Container Registry
+      - name: Login no Azure Container Registry
         uses: azure/docker-login@v1
         with:
           login-server: rcgaleria.azurecr.io
           username: rcgaleria
           password: Gg4h/P3shN93VBCZndMXiwoj6HEott62PG5ruHOHGx+ACRDE84Vd
 
-      - name: Build Docker image and Push
+      - name: Build e push da imagem Docker
         run: |
           docker-compose build
           docker tag galeria-app rcgaleria.azurecr.io/galeria-app
           docker push rcgaleria.azurecr.io/galeria-app
-
-
  
           
