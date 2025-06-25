@@ -18,9 +18,9 @@ WORKDIR /app
 # Copia o JAR gerado da etapa anterior
 COPY --from=build /app/target/*.jar app.jar
 
-# Expõe as portas (caso tenha nginx reverso ou outra estratégia de rede)
-EXPOSE 8080
+# Expõe as portas (opcional, mas boa prática)
 EXPOSE 80
+EXPOSE 8080
 
-# Comando de execução
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Comando de execução com a porta correta para Azure
+ENTRYPOINT ["java", "-jar", "app.jar", "--server.port=80"]
