@@ -17,6 +17,7 @@ services:
       - galeria-network
 
   app:
+    image: galeria-app
     build:
       context: .
       dockerfile: Dockerfile
